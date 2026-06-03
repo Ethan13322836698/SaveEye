@@ -41,7 +41,7 @@ struct ConfigWindow: View {
             .padding(20)
             .cornerRadius(12)
 
-            Button("退出应用") {
+            Button(L10n.string("settings.quit_app")) {
                 appState.quitApp()
             }
             .buttonStyle(.bordered)
@@ -64,7 +64,7 @@ struct ConfigWindow: View {
                 .frame(width: 12, height: 12)
 
             VStack(alignment: .leading, spacing: 2) {
-                Text(appState.isRunning ? "护眼保护已启动" : "护眼保护已关闭")
+                Text(appState.isRunning ? L10n.string("settings.protection.enabled") : L10n.string("settings.protection.disabled"))
                     .font(.body)
                     .fontWeight(.medium)
 
@@ -93,7 +93,7 @@ struct ConfigWindow: View {
 
     private var breakIntervalCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("休息间隔")
+            Text(L10n.string("settings.break_interval.title"))
                 .font(.headline)
 
             HStack {
@@ -105,7 +105,7 @@ struct ConfigWindow: View {
                     in: 5 ... 60,
                     step: 5
                 ) {
-                    Text("休息间隔")
+                    Text(L10n.string("settings.break_interval.title"))
                 } minimumValueLabel: {
                     Text("5")
                         .font(.caption)
@@ -123,13 +123,13 @@ struct ConfigWindow: View {
                         .fontWeight(.semibold)
                         .frame(minWidth: 40)
 
-                    Text("分钟")
+                    Text(L10n.string("unit.minute.short"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
 
-            Text("建议设置为 20-30 分钟，有效缓解眼部疲劳")
+            Text(L10n.string("settings.break_interval.recommendation"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
@@ -138,7 +138,7 @@ struct ConfigWindow: View {
 
     private var restDurationCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("休息时间")
+            Text(L10n.string("settings.rest_duration.title"))
                 .font(.headline)
 
             HStack {
@@ -150,7 +150,7 @@ struct ConfigWindow: View {
                     in: 10 ... 60,
                     step: 5
                 ) {
-                    Text("休息时间")
+                    Text(L10n.string("settings.rest_duration.title"))
                 } minimumValueLabel: {
                     Text("10")
                         .font(.caption)
@@ -168,13 +168,13 @@ struct ConfigWindow: View {
                         .fontWeight(.semibold)
                         .frame(minWidth: 40)
 
-                    Text("秒")
+                    Text(L10n.string("unit.second.short"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
 
-            Text("建议设置为 20-60 秒，让眼部得到充分休息")
+            Text(L10n.string("settings.rest_duration.recommendation"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
@@ -183,7 +183,7 @@ struct ConfigWindow: View {
 
     private var delayDurationCard: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("延迟时间")
+            Text(L10n.string("settings.delay_duration.title"))
                 .font(.headline)
 
             HStack {
@@ -195,7 +195,7 @@ struct ConfigWindow: View {
                     in: 1 ... 10,
                     step: 1
                 ) {
-                    Text("延迟时间")
+                    Text(L10n.string("settings.delay_duration.title"))
                 } minimumValueLabel: {
                     Text("1")
                         .font(.caption)
@@ -213,13 +213,13 @@ struct ConfigWindow: View {
                         .fontWeight(.semibold)
                         .frame(minWidth: 40)
 
-                    Text("分钟")
+                    Text(L10n.string("unit.minute.short"))
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
 
-            Text("建议设置为 1-10 分钟，有效缓解眼部疲劳")
+            Text(L10n.string("settings.delay_duration.recommendation"))
                 .font(.caption)
                 .foregroundColor(.secondary)
                 .padding(.top, 4)
@@ -229,11 +229,11 @@ struct ConfigWindow: View {
     private var autoStartCard: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("开机自启动")
+                Text(L10n.string("settings.auto_start.title"))
                     .font(.body)
                     .fontWeight(.medium)
 
-                Text("应用将在系统启动时自动运行")
+                Text(L10n.string("settings.auto_start.description"))
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
@@ -272,10 +272,10 @@ struct ConfigWindow: View {
 
     private func requestAccessibilityPermission() {
         let alert = NSAlert()
-        alert.messageText = "需要辅助功能权限"
-        alert.informativeText = "SaveEye 需要辅助功能权限来监控您的活动并提供护眼提醒。"
-        alert.addButton(withTitle: "打开系统设置")
-        alert.addButton(withTitle: "稍后设置")
+        alert.messageText = L10n.string("permission.accessibility.title")
+        alert.informativeText = L10n.string("permission.accessibility.message")
+        alert.addButton(withTitle: L10n.string("permission.accessibility.open_settings"))
+        alert.addButton(withTitle: L10n.string("permission.accessibility.later"))
         alert.alertStyle = .informational
 
         let response = alert.runModal()

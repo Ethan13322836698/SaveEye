@@ -31,7 +31,7 @@ struct EyeCareWindow: View {
 
             VStack(spacing: 120) {
                 // 简洁标题
-                Text("护眼休息")
+                Text(L10n.string("eye_care.title"))
                     .font(.system(size: 32, weight: .ultraLight, design: .rounded))
                     .foregroundColor(.white.opacity(0.9))
                     .tracking(8)
@@ -62,7 +62,7 @@ struct EyeCareWindow: View {
                             .opacity(breathingOpacity)
                         
                         // 中心引导文字
-                        Text("注视远方")
+                        Text(L10n.string("eye_care.focus_far"))
                             .font(.system(size: 18, weight: .light, design: .rounded))
                             .foregroundColor(.green.opacity(0.9))
                             .tracking(4)
@@ -103,7 +103,7 @@ struct EyeCareWindow: View {
             // 操作提示（底部）
             VStack {
                 Spacer()
-                Text("按住 ESC 键退出")
+                Text(L10n.string("eye_care.hold_esc_to_exit"))
                     .font(.system(size: 14, weight: .ultraLight, design: .rounded))
                     .foregroundColor(.white.opacity(0.5))
                     .tracking(2)

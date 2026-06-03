@@ -156,18 +156,18 @@ class EyeCareTimer: ObservableObject {
 
     var statusDescription: String {
         if !isActive {
-            return "Timer not started"
+            return L10n.string("timer.not_started")
         }
 
         if shouldShowEyeCare {
-            return "休息时间"
+            return L10n.string("timer.rest_time")
         }
 
         let timeSinceLastActivity = activityMonitor.timeSinceLastActivity
         if timeSinceLastActivity >= inactivityThreshold {
-            return "暂停中（无活动）"
+            return L10n.string("timer.paused_inactive")
         }
 
-        return "工作中 - 剩余 \(formattedTimeRemaining)"
+        return L10n.format("timer.working_remaining", formattedTimeRemaining)
     }
 }
