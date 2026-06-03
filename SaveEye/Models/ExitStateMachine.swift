@@ -59,21 +59,21 @@ class ExitStateMachine: ObservableObject {
     private func enterFirstPress() {
         currentState = .firstPress
         pressCount = 1
-        showMessage = "再按2次ESC键可退出护眼模式"
+        showMessage = L10n.string("exit.press_twice")
         startClickTimer()
     }
 
     private func enterSecondPress() {
         currentState = .secondPress
         pressCount = 2
-        showMessage = "再按1次ESC键可退出护眼模式"
+        showMessage = L10n.string("exit.press_once")
         restartClickTimer()
     }
 
     private func enterThirdPress() {
         currentState = .thirdPress
         pressCount = 3
-        showMessage = "延迟\(delayMinutes)分钟后继续工作..."
+        showMessage = L10n.format("exit.delay_after", L10n.minutes(delayMinutes))
 
         timer?.invalidate()
         timer = nil
@@ -84,7 +84,7 @@ class ExitStateMachine: ObservableObject {
     }
 
     private func handleDelayEscape() {
-        showMessage = "延迟\(delayMinutes)分钟，继续工作..."
+        showMessage = L10n.format("exit.delay_now", L10n.minutes(delayMinutes))
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.triggerDelay()
@@ -113,7 +113,7 @@ class ExitStateMachine: ObservableObject {
     func enterDelayState() {
         currentState = .delayRequest
         pressCount = 0
-        showMessage = "是否需要延迟休息？按ESC延迟\(delayMinutes)分钟"
+        showMessage = L10n.format("exit.ask_delay", L10n.minutes(delayMinutes))
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
             if self.currentState == .delayRequest {
@@ -142,15 +142,15 @@ class ExitStateMachine: ObservableObject {
     var stateDescription: String {
         switch currentState {
         case .idle:
-            return "空闲"
+            return L10n.string("exit.state.idle")
         case .firstPress:
-            return "第一次ESC"
+            return L10n.string("exit.state.first_press")
         case .secondPress:
-            return "第二次ESC"
+            return L10n.string("exit.state.second_press")
         case .thirdPress:
-            return "第三次ESC（退出中）"
+            return L10n.string("exit.state.third_press")
         case .delayRequest:
-            return "延迟请求"
+            return L10n.string("exit.state.delay_request")
         }
     }
 

@@ -16,7 +16,7 @@ struct SaveEyeApp: App {
 
     var body: some Scene {
         // 配置窗口（启动时显示）
-        WindowGroup("SaveEye Config", id: "config") {
+        WindowGroup(L10n.string("window.config.title"), id: "config") {
             ConfigWindow()
                 .environmentObject(settings)
                 .environmentObject(appState)

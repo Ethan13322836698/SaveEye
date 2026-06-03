@@ -172,6 +172,8 @@ class AppState: ObservableObject {
             )
 
             // 设置窗口属性 - 真正的全屏覆盖
+            window.identifier = NSUserInterfaceItemIdentifier("eyeCare")
+            window.title = L10n.string("window.eye_care.title")
             window.level = NSWindow.Level.screenSaver
             window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .fullScreenDisallowsTiling]
             window.isReleasedWhenClosed = false
@@ -221,7 +223,7 @@ class AppState: ObservableObject {
 
     // 获取计时器状态信息
     var timerStatus: String {
-        return eyeCareTimer?.statusDescription ?? "未初始化"
+        return eyeCareTimer?.statusDescription ?? L10n.string("timer.not_initialized")
     }
 
     var timeRemaining: String {
@@ -299,7 +301,7 @@ class AppState: ObservableObject {
         eyeCareWindows.removeAll()
 
         let swiftUIWindows = NSApplication.shared.windows.filter {
-            $0.title.contains("SaveEye Care") || $0.title.contains("Eye Care")
+            $0.identifier?.rawValue == "eyeCare"
         }
 
         for window in swiftUIWindows {
