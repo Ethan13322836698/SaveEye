@@ -7,19 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-03
+
 ### Added
-- DMG 安装包支持
-- GitHub Actions 自动化发布流程
-- Homebrew Cask 集成
-- 极简美观的护眼界面重设计
+- English, Simplified Chinese, and Japanese localization for the app UI.
+- Localized Accessibility permission copy for English, Simplified Chinese, and Japanese.
 
 ### Changed
-- 优化护眼界面，采用抽象的视觉引导设计
-- 改进呼吸动画，使用更柔和的缩放和透明度效果
-- 统一护眼友好的深绿色调
-
-### Fixed
-- 改进界面布局和视觉层次
+- Use English as the development and fallback language.
+- Route user-facing timer, alert, and eye-care window text through localized resources.
 
 ## [1.0.0] - TBD
 
