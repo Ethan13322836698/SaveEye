@@ -34,10 +34,12 @@ git push origin v1.1.0
 ```
 
 2. GitHub Actions 会自动：
-   - 构建 DMG 安装包
-   - 创建 GitHub Release
-   - 上传安装包到 Release
+   - 在 Intel runner (macos-13) 上构建 x86_64 DMG 预编译包
+   - 在 Apple Silicon runner (macos-latest) 上构建 arm64 DMG 预编译包
+   - 创建 GitHub Release，并将两个架构的 DMG 一起上传到 Release 附件
    - 触发 Homebrew Cask 更新
+
+> 本地也可以按架构构建，例如：`make dmg VERSION=1.1.0 ARCH=x86_64`（默认使用本机架构）。
 
 ### 手动发布
 

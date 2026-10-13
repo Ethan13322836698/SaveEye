@@ -16,6 +16,14 @@ DIST_ZIP = $(BUILD_DIR)/$(CONFIGURATION)/$(PROJECT_NAME)-unsigned.zip
 DMG_DIR = $(BUILD_DIR)/dmg
 DMG_PATH = $(BUILD_DIR)/$(CONFIGURATION)/$(PROJECT_NAME)-$(VERSION)
 
+# 目标架构（可通过 ARCH=x86_64 或 ARCH=arm64 覆盖，默认为本机架构）
+ARCH ?= $(shell uname -m)
+ifeq ($(ARCH),x86_64)
+ARCH_SUFFIX = x86_64
+else
+ARCH_SUFFIX = arm64
+endif
+
 # GitHub 仓库信息
 GITHUB_USER = samzong
 GITHUB_REPO = SaveEye
@@ -33,13 +41,16 @@ BRANCH_NAME = update-saveeye-$(CLEAN_VERSION)
 
 # 构建应用
 build:
-	@echo "🔨 构建 $(PROJECT_NAME) 应用..."
+	@echo "🔨 构建 $(PROJECT_NAME) 应用 (架构: $(ARCH_SUFFIX))..."
 	@mkdir -p $(BUILD_DIR)
 	xcodebuild \
+		-project $(PROJECT_NAME).xcodeproj \
 		-scheme $(SCHEME) \
 		-configuration $(CONFIGURATION) \
-		-derivedDataPath $(DERIVED_DATA_PATH) \
-		-destination 'platform=macOS' \
+		-derivedDataPath $(DERIVED_DATA_PATH)-$(ARCH_SUFFIX) \
+		-destination 'platform=macOS,arch=$(ARCH_SUFFIX)' \
+		ARCHS=$(ARCH_SUFFIX) \
+		ONLY_ACTIVE_ARCH=NO \
 		build \
 		SYMROOT=$(BUILD_DIR)
 	@echo "🧹 清理扩展属性..."
@@ -52,13 +63,16 @@ build:
 
 # 构建应用（无签名版本，用于 CI）
 build-unsigned:
-	@echo "🔨 构建 $(PROJECT_NAME) 应用 (无签名版本)..."
+	@echo "🔨 构建 $(PROJECT_NAME) 应用 (无签名版本, 架构: $(ARCH_SUFFIX))..."
 	@mkdir -p $(BUILD_DIR)
 	xcodebuild \
+		-project $(PROJECT_NAME).xcodeproj \
 		-scheme $(SCHEME) \
 		-configuration $(CONFIGURATION) \
-		-derivedDataPath $(DERIVED_DATA_PATH) \
-		-destination 'platform=macOS' \
+		-derivedDataPath $(DERIVED_DATA_PATH)-$(ARCH_SUFFIX) \
+		-destination 'platform=macOS,arch=$(ARCH_SUFFIX)' \
+		ARCHS=$(ARCH_SUFFIX) \
+		ONLY_ACTIVE_ARCH=NO \
 		build \
 		SYMROOT=$(BUILD_DIR) \
 		CODE_SIGN_IDENTITY="" \
@@ -116,9 +130,9 @@ dmg: build
 	@hdiutil create -volname "$(PROJECT_NAME) $(VERSION)" \
 		-srcfolder $(DMG_DIR) \
 		-ov -format UDZO \
-		"$(DMG_PATH)-arm64.dmg"
+		"$(DMG_PATH)-$(ARCH_SUFFIX).dmg"
 	@echo "✅ DMG 创建完成！"
-	@echo "📍 arm64 DMG: $(DMG_PATH)-arm64.dmg"
+	@echo "📍 $(ARCH_SUFFIX) DMG: $(DMG_PATH)-$(ARCH_SUFFIX).dmg"
 
 # 创建 DMG 安装包（无签名版本，用于 CI）
 dmg-unsigned: build-unsigned
@@ -130,9 +144,9 @@ dmg-unsigned: build-unsigned
 	@hdiutil create -volname "$(PROJECT_NAME) $(VERSION)" \
 		-srcfolder $(DMG_DIR) \
 		-ov -format UDZO \
-		"$(DMG_PATH)-arm64.dmg"
+		"$(DMG_PATH)-$(ARCH_SUFFIX).dmg"
 	@echo "✅ DMG 创建完成！"
-	@echo "📍 arm64 DMG: $(DMG_PATH)-arm64.dmg"
+	@echo "📍 $(ARCH_SUFFIX) DMG: $(DMG_PATH)-$(ARCH_SUFFIX).dmg"
 
 # 更新 Homebrew Cask
 update-homebrew:
@@ -244,8 +258,8 @@ help:
 	@echo "  make build           - 构建 SaveEye 应用 (开发者签名版本)"
 	@echo "  make build-unsigned  - 构建应用 (无签名版本，用于 CI/发布)"
 	@echo "  make install-app     - 构建并安装应用到 /Applications"
-	@echo "  make dmg             - 创建 arm64 DMG 安装包 (开发者签名版本)"
-	@echo "  make dmg-unsigned    - 创建 arm64 DMG 安装包 (无签名版本，用于发布)"
+	@echo "  make dmg             - 创建 DMG 安装包 (开发者签名版本, 可用 ARCH=x86_64/arm64 指定架构)"
+	@echo "  make dmg-unsigned    - 创建 DMG 安装包 (无签名版本，用于发布, 可用 ARCH=x86_64/arm64 指定架构)"
 	@echo "  make update-homebrew - 更新 Homebrew Cask (暂时不可用)"
 	@echo "  make version         - 更新版本号 (需要 VERSION 参数)"
 	@echo "  make clean           - 清理构建文件"

@@ -10,7 +10,16 @@ permissions:
 
 jobs:
   release:
-    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macos-13 (Intel runner) 产出 x86_64 预编译包；macos-latest (Apple Silicon) 产出 arm64 包
+          - os: macos-13
+            arch: x86_64
+          - os: macos-latest
+            arch: arm64
+    runs-on: ${{ matrix.os }}
     
     steps:
     - name: Checkout code
@@ -27,12 +36,18 @@ jobs:
       
     - name: Build packages
       run: |
-        make dmg-unsigned VERSION=${{ steps.version.outputs.VERSION }}
+        make dmg-unsigned VERSION=${{ steps.version.outputs.VERSION }} ARCH=${{ matrix.arch }}
         
     - name: Verify DMG files
       run: |
         ls -la build/Release/SaveEye-${{ steps.version.outputs.VERSION }}-*.dmg
         file build/Release/SaveEye-${{ steps.version.outputs.VERSION }}-*.dmg
+
+    - name: Upload DMG artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: dmg-${{ matrix.arch }}
+        path: build/Release/SaveEye-${{ steps.version.outputs.VERSION }}-${{ matrix.arch }}.dmg
         
     - name: Generate release notes
       id: release_notes
@@ -58,6 +73,13 @@ jobs:
           echo "Download the corresponding DMG file and install it." >> release_notes.txt
         fi
         
+    - name: Download all architecture artifacts
+      uses: actions/download-artifact@v4
+      with:
+        pattern: dmg-*
+        path: build/Release
+        merge-multiple: true
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
@@ -72,8 +94,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
+  publish:
+    needs: release
+    runs-on: macos-latest
+    steps:
+    - name: Extract version
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
     - name: Trigger Homebrew update
-      if: success()
       uses: peter-evans/repository-dispatch@v2
       with:
         token: ${{ secrets.GH_PAT }}
